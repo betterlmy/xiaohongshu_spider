@@ -22,13 +22,12 @@
         "back2": "com.xingin.xhs:id/ot",
         "pass": "com.xingin.xhs:id/f4e"
     },
-    
     "info_id": {
-        "name_id": "com.xingin.xhs:id/egz",
-        "xhs_id": "com.xingin.xhs:id/eh0",
-        "des": "com.xingin.xhs:id/gjv",
-        "fans_num": "com.xingin.xhs:id/b7d",
-        "all_likes_num": "com.xingin.xhs:id/crd",
-        "article_likes_num": "com.xingin.xhs:id/gf5"
+        "name_id": "com.xingin.xhs:id/ehw",
+        "xhs_id": "com.xingin.xhs:id/ehx",
+        "des": "com.xingin.xhs:id/gl2",
+        "fans_num": "com.xingin.xhs:id/b7k",
+        "all_likes_num": "com.xingin.xhs:id/crw",
+        "article_likes_num": "com.xingin.xhs:id/ggf"
     }
 }

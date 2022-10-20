@@ -6,30 +6,13 @@ import os
 import sys
 import json
 import openpyxl
-# 控件id或XPATH路径存放字典
-# resource_id = {
-#     'avatar': "com.xingin.xhs:id/avatarLayout",
-#     'article': "com.xingin.xhs:id/ck2",
-#     'video': "com.xingin.xhs:id/ckq",
-#     'fresh': "com.xingin.xhs:id/c8q",
-#     'back1': "com.xingin.xhs:id/egh",
-#     'back2': "com.xingin.xhs:id/oy",
-#     'pass': "com.xingin.xhs:id/f4e",
-# }
-# resource_id = {}
-# info_id = {}
-# 个人信息id
-# info_id = {
-#     'name_id': "com.xingin.xhs:id/egz",
-#     'xhs_id': "com.xingin.xhs:id/eh0",
-#     'des': "com.xingin.xhs:id/gjv",
-#     'fans_num': "com.xingin.xhs:id/b7d",
-#     'all_likes_num': "com.xingin.xhs:id/crd",
-#     'article_likes_num': "com.xingin.xhs:id/gf5"
-# }
 
-info_list = []
-
+"""
+    1. 小红书的控件id竟然会变化!!!!
+    2. 真恶心
+    3. !w! 表示warning. 出现提示
+    4. !e! 表示error.   出现程序错误
+"""
 now_time = ""
 
 
@@ -135,7 +118,11 @@ def auto(driver, max_fresh_num=8):
             print_log("进入个人主页", end="-->")
             time.sleep(1)
             get_xml(driver)
-            info_list.append(analysis_info())  # 信息处理
+             
+            info = analysis_info()
+            if info == None:
+                return False
+            info_list.append(info)  # 信息添加
 
             wrong_step = "从个人主页返回文章"
             driver.find_element(
@@ -170,15 +157,18 @@ def analysis_info(xml="xml/info.xml"):
     for line in lines:
         for info_name, ids in info_id.items():
             if ids in line:
-                padding = 6 if ids != "com.xingin.xhs:id/eh0" else 11  # 小红书id字段特殊处理
+                padding = 6 if ids != info_id['xhs_id'] else 11  # 小红书id字段特殊处理
                 start_num = line.find("text=\"") + padding
                 end_num = line.find("\"", start_num)
                 para = line[start_num:end_num]
                 info[info_name] = para
                 break
-
-    print_log("个人信息解析完成", end="-->")
-    return info
+    if len(info) < 2:
+        print_log("!e!未获取到博主信息,建议检查config文件")
+        return None
+    else:
+        print_log("个人信息解析完成", end="-->")
+        return info
 
 
 def load_config(file="config.json"):
@@ -197,9 +187,8 @@ def load_config(file="config.json"):
     return config
 
 
-def save_excel(info_list, name="info.xlsx"):
+def save_excel(info_list, file="output/info.xlsx"):
     columns_map = {
-
         'name_id': '用户名',
         'xhs_id': '小红书id',
         'des': '个人简介',
@@ -213,7 +202,7 @@ def save_excel(info_list, name="info.xlsx"):
 
     # 每日创建新的Sheet
     try:
-        wb = openpyxl.load_workbook("output/info.xlsx")
+        wb = openpyxl.load_workbook(file)
         print_log("已加载info.xlsx", end="-->")
     except:
         print_log("excel文件读取失败")
@@ -245,9 +234,11 @@ def save_excel(info_list, name="info.xlsx"):
             fans_num = int(person_list[3])
             if fans_num < 100:
                 # 添加粉丝数等限制
+                print_log("!w! 粉丝数不满足要求")
+
                 continue
         except:
-            print_log("!e! 转换异常")
+            print_log("!w! 转换异常")
             continue
 
         ws.append(person_list)
@@ -281,7 +272,8 @@ if __name__ == "__main__":
         sys.exit()
     cap = config['device_config']
     server_config = config['appium_server_config']
-
+    global info_list
+    info_list = []
     global resource_id
     global info_id
     resource_id = config['resource_id']
@@ -305,7 +297,8 @@ if __name__ == "__main__":
             if error_num >= max_erreor_num:
                 print_log("!e!程序连续多次出现异常,退出程序")
                 break
-            driver = init_driver()
+            driver = init_driver(server_config, cap)
+        
         else:
             error_num = 0
             times += 4  # 4是因为每次查询四个

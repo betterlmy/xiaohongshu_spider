@@ -7,26 +7,26 @@ import sys
 import json
 import openpyxl
 # 控件id或XPATH路径存放字典
-resource_id = {
-    'avatar': "com.xingin.xhs:id/avatarLayout",
-    'article': "com.xingin.xhs:id/cji",
-    'video': "com.xingin.xhs:id/ckq",
-    # 'fresh': "com.xingin.xhs:id/fo8",
-    'fresh': "com.xingin.xhs:id/c8q",
-    'back1': "com.xingin.xhs:id/egh",
-    'back2': "com.xingin.xhs:id/oy",
-    'pass': "com.xingin.xhs:id/f4e",
-}
-
+# resource_id = {
+#     'avatar': "com.xingin.xhs:id/avatarLayout",
+#     'article': "com.xingin.xhs:id/ck2",
+#     'video': "com.xingin.xhs:id/ckq",
+#     'fresh': "com.xingin.xhs:id/c8q",
+#     'back1': "com.xingin.xhs:id/egh",
+#     'back2': "com.xingin.xhs:id/oy",
+#     'pass': "com.xingin.xhs:id/f4e",
+# }
+# resource_id = {}
+# info_id = {}
 # 个人信息id
-info_id = {
-    'name_id': "com.xingin.xhs:id/egz",
-    'xhs_id': "com.xingin.xhs:id/eh0",
-    'des': "com.xingin.xhs:id/gjv",
-    'fans_num': "com.xingin.xhs:id/b7d",
-    'all_likes_num': "com.xingin.xhs:id/crd",
-    'article_likes_num': "com.xingin.xhs:id/gf5"
-}
+# info_id = {
+#     'name_id': "com.xingin.xhs:id/egz",
+#     'xhs_id': "com.xingin.xhs:id/eh0",
+#     'des': "com.xingin.xhs:id/gjv",
+#     'fans_num': "com.xingin.xhs:id/b7d",
+#     'all_likes_num': "com.xingin.xhs:id/crd",
+#     'article_likes_num': "com.xingin.xhs:id/gf5"
+# }
 
 info_list = []
 
@@ -35,7 +35,8 @@ now_time = ""
 
 def print_log(x, end="\n"):
     """将日志保存到log文件夹下"""
-    end = "  "+time.strftime("%H:%M:%S", time.localtime()) + end if end =="\n" else end
+    end = "  "+time.strftime("%H:%M:%S", time.localtime()
+                             ) + end if end == "\n" else end
     date = time.strftime('%m-%d', time.localtime())+"/"
     if not os.path.exists("log/"+date):
         os.makedirs("log/"+date)
@@ -66,7 +67,7 @@ def get_xml(driver, xml="xml/info.xml"):
 
     with open(xml, "w", encoding="utf-8") as f:
         f.writelines(driver.page_source)
-        print_log("xml文件写入成功", end="-->")
+        print_log(f"xml文件成功保存到{xml}", end="-->")
 
 
 def contain_video(driver):
@@ -101,7 +102,7 @@ def fresh_page(driver):
 def auto(driver, max_fresh_num=8):
     """自动化主要流程"""
 
-    fresh_num= 0  # 刷新次数
+    fresh_num = 0  # 刷新次数
     while contain_video(driver):
         #如果包含了视频,直接fresh
         print_log("发现视频", end="-->")
@@ -118,39 +119,40 @@ def auto(driver, max_fresh_num=8):
     for index in range(4):
         # 每个阶段获取四个博主信息
         try:
-            wrong_step = "获取文章控件" # 出现异常的阶段
+            wrong_step = "获取文章控件"  # 出现异常的阶段
             articles = driver.find_elements(
                 by=AppiumBy.ID, value=resource_id["article"])
             articles[index].click()
-            
+
             wrong_step = "点击文章控件"
             print_log(f"进入第{len(info_list)+1}篇文章", end="-->")
             time.sleep(1)
             e2 = driver.find_element(
                 by=AppiumBy.ID, value=resource_id['avatar'])
             e2.click()
-            
+
             wrong_step = "点击头像控件"
             print_log("进入个人主页", end="-->")
             time.sleep(1)
-            get_xml(driver) 
-            info_list.append(analysis_info()) # 信息处理
-            
+            get_xml(driver)
+            info_list.append(analysis_info())  # 信息处理
+
             wrong_step = "从个人主页返回文章"
             driver.find_element(
                 by=AppiumBy.ID, value=resource_id['back1']).click()
             time.sleep(1)
-            
+
             wrong_step = "从文章返回首页"
             driver.find_element(
                 by=AppiumBy.ID, value=resource_id['back2']).click()
             time.sleep(1)
             print_log("退回主页")
-            
+
         except:
             print_log(f"!e!某个控件不存在或页面出现其他异常,错误阶段{wrong_step}")
+            get_xml(driver, "xml/wrong.xml")
             return False
-        
+
     if fresh_page(driver):
         return True
     return False
@@ -225,9 +227,9 @@ def save_excel(info_list, name="info.xlsx"):
     wb.active = wb[date]
     ws = wb.active
     for info in info_list:
-        meet = True # 判断当前博主是否满足条件
-        person_list = [] # 存放用户信息
-        
+        meet = True  # 判断当前博主是否满足条件
+        person_list = []  # 存放用户信息
+
         for k, _ in columns_map.items():
             if k in info.keys():
                 # 添加异常判断
@@ -235,56 +237,63 @@ def save_excel(info_list, name="info.xlsx"):
             else:
                 meet = False
                 break
-            
+
         if not meet:
             continue
-        
+
         try:
             fans_num = int(person_list[3])
-            if fans_num<100:
-            # 添加粉丝数等限制
+            if fans_num < 100:
+                # 添加粉丝数等限制
                 continue
         except:
             print_log("!e! 转换异常")
             continue
-            
-        ws.append(person_list) 
+
+        ws.append(person_list)
 
     wb.save("output/info.xlsx")
     print_log("新数据已保存至output/info.xlsx")
 
 
-driver = None
-
-def init_driver():
-    config = load_config()
-    if config is None:
-        # 配置文件不存在
-        sys.exit()
-    cap = config['device_config']
-    server_config = config['appium_server_config']
+def init_driver(server_config, cap):
+    driver1 = None
     server = f"{server_config['protocol']}://{server_config['host']}:{server_config['port']}{server_config['path']}"
     try:
-        global driver
-        driver = webdriver.Remote(server, cap)
-        driver.implicitly_wait(3)  # 设置隐式等待时间为3秒.定位控件时间超过3秒 则报错
+        driver1 = webdriver.Remote(server, cap)
+        driver1.implicitly_wait(3)  # 设置隐式等待时间为3秒.定位控件时间超过3秒 则报错
         print_log("appium服务连接成功")
     except:
         print_log("!e!appium服务启动失败,请检查appium服务是否启动")
-    
 
     time.sleep(3)  # 等待手机响应
-    return driver
+    return driver1
+
 
 if __name__ == "__main__":
     now_time = time.strftime("%m-%d-%H-%M-%S", time.localtime())
     print_log(f"程序开始运行,开始时间:")
 
-    driver = init_driver()
+    config = load_config()
+    if config is None:
+        # 配置文件不存在
+        print_log("!e! 配置文件不存在")
+        sys.exit()
+    cap = config['device_config']
+    server_config = config['appium_server_config']
+
+    global resource_id
+    global info_id
+    resource_id = config['resource_id']
+    info_id = config['info_id']
     
+    global driver
+    driver = init_driver(server_config, cap)
+
     # 跳过广告
     # pass_ad(driver)
     # fresh_page(driver)
+    
     error_num = 0
     max_erreor_num = 2
     plan_num = 4 * 20  # 计划获取的博主数据量
@@ -300,9 +309,8 @@ if __name__ == "__main__":
         else:
             error_num = 0
             times += 4  # 4是因为每次查询四个
-            if len(info_list) > 0: # 每四次写入excel一次
+            if len(info_list) > 0:  # 每四次写入excel一次
                 save_excel(info_list)
                 info_list = []
             else:
                 print_log("!e!无新数据可以保存")
-

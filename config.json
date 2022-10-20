@@ -1,6 +1,5 @@
 {
-    "device_config":
-    {
+    "device_config": {
         "platformName": "Android",
         "appium:deviceName": "SXGBB21906207847",
         "appium:appPackage": "com.xingin.xhs",
@@ -8,12 +7,28 @@
         "appium:noReset": "True",
         "appium:automationName": "UiAutomator2"
     },
-
-    "appium_server_config":
-    {
-        "protocol" : "http",
-        "host" : "192.168.50.3",
-        "port" : "4723",
-        "path" : "/wd/hub"
+    "appium_server_config": {
+        "protocol": "http",
+        "host": "192.168.50.3",
+        "port": "4723",
+        "path": "/wd/hub"
+    },
+    "resource_id": {
+        "avatar": "com.xingin.xhs:id/avatarLayout",
+        "article": "com.xingin.xhs:id/ck2",
+        "video": "com.xingin.xhs:id/cl_",
+        "fresh": "com.xingin.xhs:id/c8n",
+        "back1": "com.xingin.xhs:id/ehe",
+        "back2": "com.xingin.xhs:id/ot",
+        "pass": "com.xingin.xhs:id/f4e"
+    },
+    
+    "info_id": {
+        "name_id": "com.xingin.xhs:id/egz",
+        "xhs_id": "com.xingin.xhs:id/eh0",
+        "des": "com.xingin.xhs:id/gjv",
+        "fans_num": "com.xingin.xhs:id/b7d",
+        "all_likes_num": "com.xingin.xhs:id/crd",
+        "article_likes_num": "com.xingin.xhs:id/gf5"
     }
 }

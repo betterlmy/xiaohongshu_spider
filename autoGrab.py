@@ -98,17 +98,17 @@ def fresh_page(driver):
         return False
 
 
-def auto(driver, max_time=8):
+def auto(driver, max_fresh_num=8):
     """自动化主要流程"""
 
-    fresh_time = 0  # 刷新次数
+    fresh_num= 0  # 刷新次数
     while contain_video(driver):
         #如果包含了视频,直接fresh
         print_log("发现视频", end="-->")
         if fresh_page(driver):
             print_log("页面刷新一次", end="-->")
-            fresh_time += 1
-            if fresh_time > max_time:
+            fresh_num += 1
+            if fresh_num > max_fresh_num:
                 print_log("刷新次数过多仍未获取到信息,退出程序")
                 return False
         else:
@@ -118,29 +118,39 @@ def auto(driver, max_time=8):
     for index in range(4):
         # 每个阶段获取四个博主信息
         try:
+            wrong_step = "获取文章控件" # 出现异常的阶段
             articles = driver.find_elements(
                 by=AppiumBy.ID, value=resource_id["article"])
             articles[index].click()
+            
+            wrong_step = "点击文章控件"
             print_log(f"进入第{len(info_list)+1}篇文章", end="-->")
             time.sleep(1)
             e2 = driver.find_element(
                 by=AppiumBy.ID, value=resource_id['avatar'])
             e2.click()
+            
+            wrong_step = "点击头像控件"
             print_log("进入个人主页", end="-->")
             time.sleep(1)
-
-            get_xml(driver)
-            info_list.append(analysis_info())
+            get_xml(driver) 
+            info_list.append(analysis_info()) # 信息处理
+            
+            wrong_step = "从个人主页返回文章"
             driver.find_element(
                 by=AppiumBy.ID, value=resource_id['back1']).click()
             time.sleep(1)
+            
+            wrong_step = "从文章返回首页"
             driver.find_element(
                 by=AppiumBy.ID, value=resource_id['back2']).click()
             time.sleep(1)
             print_log("退回主页")
+            
         except:
-            print_log("!e!某个控件不存在或页面出现其他异常")
+            print_log(f"!e!某个控件不存在或页面出现其他异常,错误阶段{wrong_step}")
             return False
+        
     if fresh_page(driver):
         return True
     return False
@@ -275,22 +285,24 @@ if __name__ == "__main__":
     # 跳过广告
     # pass_ad(driver)
     # fresh_page(driver)
-    error_time = 0
+    error_num = 0
+    max_erreor_num = 2
     plan_num = 4 * 20  # 计划获取的博主数据量
     times = 0  # 当前已经查询的数据量
     while times < plan_num:
         if not auto(driver):
-            print_log("!e!程序出现异常,重新开始执行")
-            driver = init_driver()
-            error_time += 1
-            if error_time >= 4:
+            print_log(f"!e!程序出现异常,异常次数{error_num},重新开始执行")
+            error_num += 1
+            if error_num >= max_erreor_num:
                 print_log("!e!程序连续多次出现异常,退出程序")
                 break
-        error_time = 0
-        times += 4  # 4是因为每次查询四个
-        if len(info_list) > 0: # 每四次写入excel一次
-            save_excel(info_list)
-            info_list = []
+            driver = init_driver()
         else:
-            print_log("!e!无新数据可以保存")
+            error_num = 0
+            times += 4  # 4是因为每次查询四个
+            if len(info_list) > 0: # 每四次写入excel一次
+                save_excel(info_list)
+                info_list = []
+            else:
+                print_log("!e!无新数据可以保存")
 

@@ -1,4 +1,5 @@
 import time
+from tkinter import N
 from appium import webdriver
 from appium.webdriver.common.appiumby import AppiumBy
 # from selenium.webdriver.support.wait import WebDriverWait
@@ -12,9 +13,11 @@ import openpyxl
     2. 真恶心
     3. !w! 表示warning. 出现提示
     4. !e! 表示error.   出现程序错误
+    5. 仍需要完成的任务: 重复博主出现,邮箱过滤,前端框架
 """
 now_time = ""
 
+wait_time = .5
 
 def print_log(x, end="\n"):
     """将日志保存到log文件夹下"""
@@ -35,7 +38,7 @@ def pass_ad(driver):
 
     try:
         driver.find_element(by=AppiumBy.ID, value=resource_id["pass"]).click()
-        time.sleep(1)
+        time.sleep(wait_time)
         print_log("跳过广告成功", end="-->")
     except:
         print_log("不存在广告", end="-->")
@@ -48,9 +51,12 @@ def get_xml(driver, xml="xml/info.xml"):
         os.mkdir("xml")
         print_log("xml文件夹不存在,已自动创建")
 
-    with open(xml, "w", encoding="utf-8") as f:
-        f.writelines(driver.page_source)
-        print_log(f"xml文件成功保存到{xml}", end="-->")
+    if driver is None:
+        print_log(f"!e!Driver不存在")
+    else:
+        with open(xml, "w", encoding="utf-8") as f:
+            f.writelines(driver.page_source)
+            print_log(f"xml文件成功保存到{xml}", end="-->")
 
 
 def contain_video(driver):
@@ -58,7 +64,7 @@ def contain_video(driver):
 
     try:
         driver.find_element(by=AppiumBy.ID, value=resource_id["video"])
-        time.sleep(1)
+        time.sleep(wait_time)
         return True
     except:
         return False
@@ -74,7 +80,7 @@ def fresh_page(driver):
         #         e.click()
 
         driver.find_element(by=AppiumBy.ID, value=resource_id['fresh']).click()
-        # time.sleep(1)
+        # time.sleep(wait_time)
         print_log("页面刷新成功", end="-->")
         return True
     except:
@@ -90,7 +96,6 @@ def auto(driver, max_fresh_num=8):
         #如果包含了视频,直接fresh
         print_log("发现视频", end="-->")
         if fresh_page(driver):
-            print_log("页面刷新一次", end="-->")
             fresh_num += 1
             if fresh_num > max_fresh_num:
                 print_log("刷新次数过多仍未获取到信息,退出程序")
@@ -109,14 +114,14 @@ def auto(driver, max_fresh_num=8):
 
             wrong_step = "点击文章控件"
             print_log(f"进入第{len(info_list)+1}篇文章", end="-->")
-            time.sleep(1)
+            time.sleep(wait_time)
             e2 = driver.find_element(
                 by=AppiumBy.ID, value=resource_id['avatar'])
             e2.click()
 
             wrong_step = "点击头像控件"
             print_log("进入个人主页", end="-->")
-            time.sleep(1)
+            time.sleep(wait_time)
             get_xml(driver)
              
             info = analysis_info()
@@ -127,12 +132,12 @@ def auto(driver, max_fresh_num=8):
             wrong_step = "从个人主页返回文章"
             driver.find_element(
                 by=AppiumBy.ID, value=resource_id['back1']).click()
-            time.sleep(1)
+            time.sleep(wait_time)
 
             wrong_step = "从文章返回首页"
             driver.find_element(
                 by=AppiumBy.ID, value=resource_id['back2']).click()
-            time.sleep(1)
+            time.sleep(wait_time)
             print_log("退回主页")
 
         except:
@@ -288,11 +293,12 @@ if __name__ == "__main__":
     
     error_num = 0
     max_erreor_num = 2
-    plan_num = 4 * 20  # 计划获取的博主数据量
+    plan_num = 400  # 计划获取的轮数
     times = 0  # 当前已经查询的数据量
+    
     while times < plan_num:
         if not auto(driver):
-            print_log(f"!e!程序出现异常,异常次数{error_num},重新开始执行")
+            print_log(f"!e!程序出现异常,连续异常次数{error_num},重新开始执行")
             error_num += 1
             if error_num >= max_erreor_num:
                 print_log("!e!程序连续多次出现异常,退出程序")
@@ -301,7 +307,7 @@ if __name__ == "__main__":
         
         else:
             error_num = 0
-            times += 4  # 4是因为每次查询四个
+            times += 1  # 4是因为每次查询四个
             if len(info_list) > 0:  # 每四次写入excel一次
                 save_excel(info_list)
                 info_list = []

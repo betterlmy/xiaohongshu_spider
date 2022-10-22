@@ -1,4 +1,6 @@
-with open('output/known_id.txt',"r",encoding='utf-8') as f:
-        known_xhs_id= [line.strip("\n") for line in f.readlines()]
+known_xhs_id = [5,6,'7']
 
-print(known_xhs_id)
+
+with open("output/known_id.txt","w",encoding="utf-8") as f:
+    for id in known_xhs_id:
+        f.write(str(id)+"\n")

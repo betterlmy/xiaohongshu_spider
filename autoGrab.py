@@ -20,6 +20,7 @@ now_time = ""
 wait_time = .5
 
 known_xhs_id = []
+
 def print_log(x, end="\n"):
     """将日志保存到log文件夹下"""
     end = "  "+time.strftime("%H:%M:%S", time.localtime()
@@ -219,6 +220,7 @@ def save_excel(info_list, file="output/info.xlsx"):
         print_log("新创建工作表", "-->")
         ws.append([v for _, v in columns_map.items()])
 
+    # 激活当前的sheet
     wb.active = wb[date]
     ws = wb.active
     for info in info_list:
@@ -237,14 +239,20 @@ def save_excel(info_list, file="output/info.xlsx"):
             continue
 
         try:
-            fans_num = int(person_list[3])
+            fans_num = int(person_list[3]) # 粉丝数
+            xhs_id = person_list[1] # 小红书id    
             if fans_num < 100:
                 # 添加粉丝数等限制
-                print_log("!w! 粉丝数不满足要求")
-
+                print_log("!w! 粉丝数不满足要求",end="")
                 continue
+            
+            elif xhs_id in known_xhs_id:
+                print_log("!w! 该用户已经存在",end="") 
+            else:
+                known_xhs_id.append(xhs_id)
+                
         except:
-            print_log("!w! 转换异常")
+            print_log("!w! 转换异常",end="")
             continue
         
         ws.append(person_list)
@@ -269,7 +277,7 @@ def init_driver(server_config, cap):
 
 if __name__ == "__main__":
     now_time = time.strftime("%m-%d-%H-%M-%S", time.localtime())
-    print_log(f"程序开始运行,开始时间:")
+    print_log(f"程序运行开始,时间:")
 
     config = load_config()
     if config is None:
@@ -317,3 +325,13 @@ if __name__ == "__main__":
                 info_list = []
             else:
                 print_log("!e!无新数据可以保存")
+        
+        try:        
+            with open("output/known_id.txt","w",encoding="utf-8") as f:
+                for id in known_xhs_id:
+                    f.write(str(id)+"\n")
+            print_log("known_id.txt已更新")
+        except:
+            print_log("!e! known_id.txt写入失败")
+    
+    print_log(f"程序运行结束,时间:")

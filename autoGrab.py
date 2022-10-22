@@ -13,12 +13,13 @@ import openpyxl
     2. 真恶心
     3. !w! 表示warning. 出现提示
     4. !e! 表示error.   出现程序错误
-    5. 仍需要完成的任务: 重复博主出现,邮箱过滤,前端框架
+    5. 仍需要完成的任务: 重复博主出现,邮箱过滤,前端框架,点击更多,
 """
 now_time = ""
 
 wait_time = .5
 
+known_xhs_id = []
 def print_log(x, end="\n"):
     """将日志保存到log文件夹下"""
     end = "  "+time.strftime("%H:%M:%S", time.localtime()
@@ -245,7 +246,7 @@ def save_excel(info_list, file="output/info.xlsx"):
         except:
             print_log("!w! 转换异常")
             continue
-
+        
         ws.append(person_list)
 
     wb.save("output/info.xlsx")
@@ -283,6 +284,9 @@ if __name__ == "__main__":
     global info_id
     resource_id = config['resource_id']
     info_id = config['info_id']
+    
+    with open('output/known_id.txt',"r",encoding='utf-8') as f:
+        known_xhs_id= [line.strip("\n") for line in f.readlines()]    
     
     global driver
     driver = init_driver(server_config, cap)

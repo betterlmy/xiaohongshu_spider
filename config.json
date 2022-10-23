@@ -1,5 +1,5 @@
 {
-    "device_config": {
+    "cap": {
         "platformName": "Android",
         "appium:deviceName": "SXGBB21906207847",
         "appium:appPackage": "com.xingin.xhs",
@@ -19,8 +19,7 @@
         "video": "com.xingin.xhs:id/cl_",
         "fresh": "com.xingin.xhs:id/c8n",
         "back1": "com.xingin.xhs:id/ehe",
-        "back2": "com.xingin.xhs:id/ot",
-        "pass": "com.xingin.xhs:id/f4e"
+        "back2": "com.xingin.xhs:id/ot"
     },
     "info_id": {
         "name_id": "com.xingin.xhs:id/ehw",

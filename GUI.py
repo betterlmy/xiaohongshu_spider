@@ -1,12 +1,9 @@
-from re import T
-from tkinter.tix import Tree
 import PySimpleGUI as sg
 import os
 import sys
 import json
 from utils import load_config, print_log
 import time
-import threading
 
 def check(type1, values, config, changed):
     """检查并修改配置变量"""
@@ -198,35 +195,16 @@ def GUI_running(t):
         [sg.Button('关闭任务')]
     ]
     running_window = sg.Window("运行中", runningLayout)
-    while True:
-        event, values = running_window.read()
+    x=0
+    while t.is_alive():
+        event, values = running_window.read(timeout=1000)# 每秒查询一次
         if event == sg.WIN_CLOSED or event == '关闭任务':
+            t.stop()
             break
-        time.sleep(.01)
+
     running_window.close()
     
-    t.stop()
+    
 
 if __name__ == '__main__':
-    class MyThread(threading.Thread):
-        def __init__(self,name):
-            threading.Thread.__init__(self)
-            self.name = name
-            self.stopped = False
-           
-        
-        def run(self):
-            x=0
-            while True:
-                x+=1
-                print(x)
-                time.sleep(1)
-                if self.stopped:
-                    break
-                
-        def stop(self):
-            self.stopped = True
-
-    t1 = MyThread("x")
-    t1.start()
-    GUI_running(t1)
+    GUI_running()

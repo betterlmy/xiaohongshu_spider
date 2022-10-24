@@ -27,7 +27,7 @@ class autoThread(threading.Thread):
         info_id = self.config['info_id']
         info_list=[]
         error_num = 0
-        max_erreor_num = 10
+        max_erreor_num = 1
         plan_num = 400  # 计划获取的轮数
         times = 0  # 当前已经查询的数据量
 
@@ -76,6 +76,8 @@ if __name__ == '__main__':
     t1 = autoThread(driver,config,known_xhs_id)
     t1.start()
     GUI_running(t1)
+    
+    
 
     
     

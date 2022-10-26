@@ -143,6 +143,8 @@ def GUI_start():
     configLayout = [
         [sg.Text('默认等待时间(s):'), sg.InputText(
             default_text='0.5', key='wait_time')],
+        [sg.Text('最大错误次数:'), sg.InputText(
+            default_text='10', key='max_error_time')],
         [sg.Button('开始执行'), sg.Button('关闭')]
     ]
 
@@ -168,7 +170,7 @@ def GUI_start():
 
         if not closed:
             if changed:  # 修改config文件
-                with open("confing2.json", 'w') as f:
+                with open("config.json", 'w') as f:
                     json.dump(config, f)
 
             # 获取运行参数
@@ -180,13 +182,14 @@ def GUI_start():
 
                 try:
                     wait_time = float(values['wait_time'])
+                    max_error_time = int(values['max_error_time'])
                 except:
-                    print_log("!e! wait_time格式转换错误")
-                info_window.close()
+                    print_log("!e! 前端格式转换错误")
+                setting_window.close()
                 break
 
-        return now_time, config, wait_time
-    return now_time, config, 0.5
+        return now_time, config, wait_time ,max_error_time
+    return now_time, config, 0.5 ,10
 
 def GUI_running(t):
 
@@ -194,7 +197,7 @@ def GUI_running(t):
         [sg.Text('服务器连接成功,正在运行中...')],
         [sg.Button('关闭任务')]
     ]
-    running_window = sg.Window("运行中", runningLayout)
+    running_window = sg.Window("运行中", runningLayout,margins=(100, 100))
     x=0
     while t.is_alive():
         event, values = running_window.read(timeout=1000)# 每秒查询一次

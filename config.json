@@ -4,7 +4,7 @@
         "appium:deviceName": "SXGBB21906207847",
         "appium:appPackage": "com.xingin.xhs",
         "appium:appActivity": "com.xingin.xhs.index.v2.IndexActivityV2",
-        "appium:noReset": "True",
+        "appium:noReset": true,
         "appium:automationName": "UiAutomator2"
     },
     "appium_server_config": {
@@ -15,7 +15,7 @@
     },
     "resource_id": {
         "avatar": "com.xingin.xhs:id/avatarLayout",
-        "article": "com.xingin.xhs:id/ck2",
+        "article": "com.xingin.xhs:id/c4v",
         "video": "com.xingin.xhs:id/cl_",
         "fresh": "com.xingin.xhs:id/c8n",
         "back1": "com.xingin.xhs:id/ehe",
@@ -27,6 +27,6 @@
         "des": "com.xingin.xhs:id/gl2",
         "fans_num": "com.xingin.xhs:id/b7k",
         "all_likes_num": "com.xingin.xhs:id/crw",
-        "article_likes_num": "com.xingin.xhs:id/ggf"
+        "ave": "com.xingin.xhs:id/ggf"
     }
 }

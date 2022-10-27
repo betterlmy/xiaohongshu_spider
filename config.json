@@ -14,19 +14,18 @@
         "path": "/wd/hub"
     },
     "resource_id": {
-        "avatar": "com.xingin.xhs:id/avatarLayout",
-        "article": "com.xingin.xhs:id/c4v",
-        "video": "com.xingin.xhs:id/cl_",
-        "fresh": "com.xingin.xhs:id/c8n",
-        "back1": "com.xingin.xhs:id/ehe",
-        "back2": "com.xingin.xhs:id/ot"
+        "chuanda_article": "com.xingin.xhs:id/c5y",
+        "tuijian_article": "com.xingin.xhs:id/cl_",
+        "back1": "com.xingin.xhs:id/ej6",
+        "back2": "com.xingin.xhs:id/ox",
+        "back21": "com.xingin.xhs:id/backButton"
     },
     "info_id": {
-        "name_id": "com.xingin.xhs:id/ehw",
-        "xhs_id": "com.xingin.xhs:id/ehx",
-        "des": "com.xingin.xhs:id/gl2",
-        "fans_num": "com.xingin.xhs:id/b7k",
-        "all_likes_num": "com.xingin.xhs:id/crw",
-        "ave": "com.xingin.xhs:id/ggf"
+        "name_id": "com.xingin.xhs:id/ejn",
+        "xhs_id": "com.xingin.xhs:id/ejo",
+        "des": "com.xingin.xhs:id/gnp",
+        "fans_num": "com.xingin.xhs:id/b8d",
+        "all_likes_num": "com.xingin.xhs:id/ct7",
+        "ave": "com.xingin.xhs:id/gj1"
     }
 }

@@ -31,7 +31,7 @@ def config_server(server_window, config, changed):
         changed = False
         if event == '使用默认配置直接开始运行':
             direct = True
-            server_window.close()
+            # server_window.close()
             return changed, config, closed, direct
         if config['appium_server_config']['host'] != values['host']:
             print_log("修改了host")
@@ -87,6 +87,10 @@ def GUI_start():
     with open("tmp/.nowtime", 'w') as f:
         f.write(now_time)  # 通过.nowtime文件来进行全局变量传递
         f.close()
+        
+    with open("tmp/.state", 'w') as f:
+        f.write(str(0))  # 通过.state文件来判断是否终止了程序
+        f.close()
 
     print_log(f"程序运行开始,时间:")
 
@@ -94,61 +98,68 @@ def GUI_start():
 
     if config is None:
         # 配置文件出现异常
+        sg.popup("发生错误","config文件不存在")
         sys.exit()
 
     resource_id = config['resource_id']
     info_id = config['info_id']
 
     serverLayout = [
-        [sg.Text('Appium服务器ip:'), sg.InputText(
-            default_text=config['appium_server_config']['host'], key='host')],
+        [sg.Text('Appium服务器ip:',size=(20,1)), sg.InputText(
+            default_text=config['appium_server_config']['host'], key='host', size=(20, 1))],
 
-        [sg.Text('设备名称(adb devices):'), sg.InputText(
-            default_text=config['cap']['appium:deviceName'], key='appium:deviceName')],
+        [sg.Text('设备名称(adb devices):',size=(20,1)), sg.InputText(
+            default_text=config['cap']['appium:deviceName'], key='appium:deviceName', size=(20, 1))],
 
         [sg.Button('配置资源id'), sg.Button('使用默认配置直接开始运行')]
 
     ]
 
     resourceIDLayout = [
-        [sg.Text('文章ID:'), sg.InputText(
-            default_text=resource_id['article'], key='article')],
-        [sg.Text('头像ID:'), sg.InputText(
-            default_text=resource_id['avatar'], key='avatar')],
-        [sg.Text('视频ID:'), sg.InputText(
-            default_text=resource_id['video'], key='video')],
-        [sg.Text('刷新ID:'), sg.InputText(
-            default_text=resource_id['fresh'], key='fresh')],
-        [sg.Text('返回1ID:'), sg.InputText(
-            default_text=resource_id['back1'], key='back1')],
-        [sg.Text('返回2ID:'), sg.InputText(
-            default_text=resource_id['back2'], key='back2')],
+        [sg.Text('穿搭文章ID:',size=(13,1)), sg.InputText(
+            default_text=resource_id['chuanda_article'], key='chuanda_article',size=(20,1))],
+        [sg.Text('推荐文章ID:',size=(13,1)), sg.InputText(
+            default_text=resource_id['tuijian_article'], key='tuijian_article',size=(20,1))],
+        [sg.Text('信息页返回ID:',size=(13,1)), sg.InputText(
+            default_text=resource_id['back1'], key='back1',size=(20,1))],
+        [sg.Text('文章返回ID:',size=(13,1)), sg.InputText(
+            default_text=resource_id['back2'], key='back2',size=(20,1))],
+        [sg.Text('视频返回ID:',size=(13,1)), sg.InputText(
+            default_text=resource_id['back21'], key='back21',size=(20,1))],
         [sg.Button('配置信息ID'), sg.Button('关闭')]
     ]
 
     infoIDLayout = [
-        [sg.Text('账号名ID:'), sg.InputText(
-            default_text=info_id['name_id'], key='name_id')],
-        [sg.Text('小红书idID:'), sg.InputText(
-            default_text=info_id['xhs_id'], key='xhs_id')],
-        [sg.Text('个人简介ID:'), sg.InputText(
-            default_text=info_id['des'], key='des')],
-        [sg.Text('粉丝数ID:'), sg.InputText(
-            default_text=info_id['fans_num'], key='fans_num')],
-        [sg.Text('总获赞ID:'), sg.InputText(
-            default_text=info_id['all_likes_num'], key='all_likes_num')],
-        [sg.Button('参数配置'), sg.Button('关闭')]
+        [sg.Text('账号名ID:',size=(13,1)), sg.InputText(
+            default_text=info_id['name_id'], key='name_id',size=(20,1))],
+        [sg.Text('小红书idID:',size=(13,1)), sg.InputText(
+            default_text=info_id['xhs_id'], key='xhs_id',size=(20,1))],
+        [sg.Text('个人简介ID:',size=(13,1)), sg.InputText(
+            default_text=info_id['des'], key='des',size=(20,1))],
+        [sg.Text('粉丝数ID:',size=(13,1)), sg.InputText(
+            default_text=info_id['fans_num'], key='fans_num',size=(20,1))],
+        [sg.Text('总获赞ID:',size=(13,1)), sg.InputText(
+            default_text=info_id['all_likes_num'], key='all_likes_num',size=(20,1))],
+        [sg.Text('均赞数ID:',size=(13,1)), sg.InputText(
+            default_text=info_id['ave'], key='ave',size=(20,1))],
+        [sg.Button('参数配置',size=(13,1)), sg.Button('关闭')]
     ]
 
     configLayout = [
-        [sg.Text('默认等待时间(s):'), sg.InputText(
-            default_text='0.5', key='wait_time')],
-        [sg.Text('最大错误次数:'), sg.InputText(
-            default_text='10', key='max_error_time')],
+        [sg.Text('默认等待时间(s):',size=(13,1)), sg.InputText(
+            default_text='0.5', key='wait_time',size=(10,1))],
+        [sg.Text('最大错误次数:',size=(13,1)), sg.InputText(
+            default_text='10', key='max_error_time',size=(10,1))],
+        [sg.Text('纵向分辨率:',size=(13,1)), sg.InputText(
+            default_text='2310', key='VR',size=(10,1))],
+        [sg.Text('横向分辨率:',size=(13,1)), sg.InputText(
+            default_text='1080', key='LR',size=(10,1))],
+        [sg.Text('进入模式:\n(1进入穿搭,0进入推荐)',size=(13,3)), sg.InputText(
+            default_text='1', key='chuanda',size=(10,3))],
         [sg.Button('开始执行'), sg.Button('关闭')]
     ]
 
-    margins = (100, 200)
+    margins = (100, 100)
     server_window = sg.Window("服务器配置", serverLayout, margins=margins)  # 绑定布局
     resource_window = sg.Window("资源ID配置", resourceIDLayout, margins=margins)
     info_window = sg.Window("信息ID配置", infoIDLayout, margins=margins)
@@ -179,35 +190,56 @@ def GUI_start():
                 if event == sg.WIN_CLOSED or event == '关闭':
                     closed = True
                     break
-
                 try:
                     wait_time = float(values['wait_time'])
                     max_error_time = int(values['max_error_time'])
+                    VR = int(values['VR'])
+                    LR = int(values['LR'])
+                    chuanda = bool(int(values['chuanda']))
+                    print(f"穿搭?{chuanda}")
+                    running_config = {
+                        'wait_time' : wait_time,
+                        'max_error_time': max_error_time,
+                        'res': [VR,LR],
+                        'chuanda':chuanda,
+                    }
                 except:
+                    sg.popup("发生错误","请检查参数配置")
                     print_log("!e! 前端格式转换错误")
-                setting_window.close()
+                    sys.exit()
                 break
+            
+        return now_time, config, running_config ,setting_window
+    running_config = {
+        'wait_time' : 0.5,
+        'max_error_time': 8,
+        'res': [2310,1080],
+        'chuanda':True,
+    }
+    return now_time, config, running_config,server_window
 
-        return now_time, config, wait_time ,max_error_time
-    return now_time, config, 0.5 ,10
-
-def GUI_running(t):
-
+def GUI_running(t,final_window,state):
+    
     runningLayout = [
-        [sg.Text('服务器连接成功,正在运行中...')],
+        [sg.Text('服务器连接成功,自动化脚本正在运行中...')],
         [sg.Button('关闭任务')]
     ]
-    running_window = sg.Window("运行中", runningLayout,margins=(100, 100))
+    
+    running_window = sg.Window("运行中", runningLayout,margins=(80, 80))
+    final_window.close()
     x=0
     while t.is_alive():
         event, values = running_window.read(timeout=1000)# 每秒查询一次
         if event == sg.WIN_CLOSED or event == '关闭任务':
-            t.stop()
+            state.stop()
             break
 
     running_window.close()
     
-    
 
+def GUI_warning(x1,x2):
+    sg.popup(x1,x2)
+    
+    
 if __name__ == '__main__':
-    GUI_running()
+    GUI_start()
